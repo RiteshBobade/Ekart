@@ -6,6 +6,7 @@ import { verifyEmail } from "../emailVerify/verifyEmail.js";
 import { sendOTPMail } from "../emailVerify/sendOTPMail.js";
 
 /* REGISTER */
+/*HHH*/
 export const register = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
