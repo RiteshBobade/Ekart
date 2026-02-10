@@ -37,16 +37,15 @@ const Login = () => {
   }
 
   const submitHandler = async (e) => {
-    e.preventDefault()
+    if (e) e.preventDefault()
+    
     try {
       setLoading(true)
       const res = await axios.post(
         "http://localhost:8000/api/v1/user/login",
         formData,
         {
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true
         }
       )
@@ -54,13 +53,15 @@ const Login = () => {
       if (res.data.success) {
         dispatch(setUser(res.data.user))
         toast.success(res.data.message)
-        localStorage.setItem("accesstoken", res.data.accesstoken) // Store token in localStorage
-        // THE FIX: Redirect to home page after success
+        
+        // Correctly save the accessToken to localStorage
+        localStorage.setItem("accessToken", res.data.accessToken) 
+        
         navigate("/") 
       }
     } catch (error) {
-      console.log(error)
-      const errorMessage = error.response?.data?.message || "Something went wrong"
+      console.error("Login Error:", error)
+      const errorMessage = error.response?.data?.message || "Invalid credentials"
       toast.error(errorMessage)
     } finally {
       setLoading(false)
@@ -68,7 +69,7 @@ const Login = () => {
   }
 
   return (
-    <div className='flex justify-center items-center min-h-screen bg-pink-300'>
+    <div className='flex justify-center items-center min-h-screen bg-pink-300 p-4'>
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
@@ -77,14 +78,14 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={submitHandler} className="flex flex-col gap-3">
+          <form onSubmit={submitHandler} className="flex flex-col gap-4">
             <div className='grid gap-2'>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="cdriteshbobade@gmail.com"
                 required
                 value={formData.email}
                 onChange={handleChange}
@@ -92,9 +93,7 @@ const Login = () => {
             </div>
 
             <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <div className='relative'>
                 <Input
                   id="password"
@@ -105,38 +104,28 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   required
                 />
-                {showPassword ? (
-                  <EyeOff 
-                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500" 
-                    size={20} 
-                    onClick={() => setShowPassword(false)} 
-                  />
-                ) : (
-                  <Eye 
-                    className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500" 
-                    size={20} 
-                    onClick={() => setShowPassword(true)} 
-                  />
-                )}
+                <div 
+                  className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </div>
               </div>
             </div>
 
-            {/* Hidden submit button to allow Enter key to work */}
-            <button type="submit" className="hidden" />
+            <Button
+              type="submit"
+              className="w-full bg-pink-600 hover:bg-pink-700"
+              disabled={loading}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex-col gap-2">
-          <Button
-            onClick={submitHandler}
-            type="submit"
-            className="w-full cursor-pointer bg-pink-600 hover:bg-pink-700"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </Button>
           <p className='text-gray-800 text-sm'>
             Don't have an account? 
-            <Link to={'/signup'} className='hover:underline cursor-pointer text-pink-800 font-medium ml-1'>
+            <Link to={'/signup'} className='hover:underline text-pink-800 font-medium ml-1'>
               Sign Up
             </Link>
           </p>
