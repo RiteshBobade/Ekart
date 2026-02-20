@@ -14,6 +14,13 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
     otp: { type: String },
     otpExpiry: { type: Date },
+    // Fields required for profile updates
+    phoneNo: { type: String },
+    address: { type: String },
+    city: { type: String },
+    zipCode: { type: String },
+    profilePic: { type: String, default: "" },
+    profilePicPublicId: { type: String, default: "" },
   },
   { timestamps: true },
 );

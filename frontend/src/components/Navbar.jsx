@@ -18,13 +18,13 @@ const Navbar = () => {
       const accesstoken = localStorage.getItem("accesstoken")
       await axios.post(`http://localhost:8000/api/v1/user/logout`, {}, {
         headers: { Authorization: `Bearer ${accesstoken}` },
-        withCredentials: true 
+        withCredentials: true
       })
     } catch (error) {
       console.log("Local logout performed")
     } finally {
-      dispatch(setUser(null)) 
-      localStorage.removeItem("accesstoken") 
+      dispatch(setUser(null))
+      localStorage.removeItem("accesstoken")
       toast.success("Logged out")
     }
   }
@@ -40,7 +40,7 @@ const Navbar = () => {
           <ul className='flex gap-7 items-center text-xl font-semibold'>
             <Link className='' to={'/'}><li>Home</li></Link>
             <Link to={'/products'}><li>Products</li></Link>
-            {user && <Link to={'/profile'}><li>Hello, {user.firstName}</li></Link>}
+            {user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName}</li></Link>}
           </ul>
           <Link to={'/cart'} className='relative'>
             <ShoppingCart />
@@ -50,13 +50,13 @@ const Navbar = () => {
             <Button onClick={logoutHandler} className='bg-pink-600 text-white cursor-pointer'>Logout</Button>
           ) : (
             <Link to="/login">
-              <Button onClick={()=>navigate('/login')} className='bg-pink-600 text-white cursor-pointer'>Login</Button>
+              <Button onClick={() => navigate('/login')} className='bg-pink-600 text-white cursor-pointer'>Login</Button>
             </Link>
           )}
         </nav>
       </div>
     </header>
-  
+
   )
 }
 
