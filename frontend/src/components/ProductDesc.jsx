@@ -6,16 +6,6 @@ import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setCart } from '@/redux/productSlice';
 
-// const ProductDesc = ({Product}) => {
-//   return (
-//     <div className='flex flex-col gap-4'>
-//       <h1>{Product.productName}</h1>
-//     </div>
-//   )
-// }
-
-
-
 const ProductDesc = ({ product }) => {
   const accessToken = localStorage.getItem("accessToken")
   const dispatch = useDispatch()

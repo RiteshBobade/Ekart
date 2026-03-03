@@ -17,7 +17,7 @@ import AdminOrders from './pages/admin/AdminOrders'
 import ShowUserOrders from './pages/admin/ShowUserOrders'
 import AdminUsers from './pages/admin/AdminUsers'
 import UserInfo from './pages/admin/UserInfo'
-import ProtectedRoutes from './components/protectedRoutes'
+import ProtectedRoutes from './components/ProtectedRoutes'
 import SingleProduct from './pages/SingleProduct'
 import AddProduct from './pages/admin/AddProduct'
 
