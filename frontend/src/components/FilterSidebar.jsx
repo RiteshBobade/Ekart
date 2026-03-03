@@ -75,7 +75,7 @@ const FilterSidebar = ({ allProducts, priceRange,setPriceRange, search, setSearc
           Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}
         </label>
         <div className='flex gap-2 items-center'>
-          <input type="number" value={priceRange[0]} onCanPlay={handleMinChange} min="0" max="5000" className='w-20 p-1 border border-gray-300 rounded'/>
+          <input type="number" value={priceRange[0]} onChange={handleMinChange} min="0" max="5000" className='w-20 p-1 border border-gray-300 rounded'/>
           <span>-</span>
           <input type="number" value={priceRange[1]} onChange={handleMaxChange} min="0" max="999999" className='w-20 p-1 border border-gray-300 rounded'/>
         </div>

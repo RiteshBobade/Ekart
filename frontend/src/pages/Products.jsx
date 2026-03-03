@@ -45,34 +45,34 @@ const Products = () => {
     }
   }
 
-  useEffect(()=> {
-    if(allProducts.length === 0) return;
+  useEffect(() => {
+    if (allProducts.length === 0) return;
 
     let filtered = [...allProducts]
 
-    if(search.trim() !== "") {
-      filtered = filtered.filter(p=>p.productName?.toLowerCase().includes(search.toLowerCase()))
+    if (search.trim() !== "") {
+      filtered = filtered.filter(p => p.productName?.toLowerCase().includes(search.toLowerCase()))
     }
 
-    if(category !== "All") {
-      filtered = filtered.filter(p=>p.category === category)
+    if (category !== "All") {
+      filtered = filtered.filter(p => p.category === category)
     }
 
-    if(brand !== "All") {
-      filtered = filtered.filter(p=>p.brand === brand)
+    if (brand !== "All") {
+      filtered = filtered.filter(p => p.brand === brand)
     }
 
-    filtered = filtered.filter(p=>p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1])
+    filtered = filtered.filter(p => p.productPrice >= priceRange[0] && p.productPrice <= priceRange[1])
 
-    if(sortOrder === "lowtohigh") {
-      filtered.sort((a,b)=>a.productPrice - b.productPrice)
+    if (sortOrder === "lowtohigh") {
+      filtered.sort((a, b) => a.productPrice - b.productPrice)
     }
-    else if(sortOrder === "hightolow") {
-      filtered.sort((a,b)=>b.productPrice - a.productPrice)
+    else if (sortOrder === "hightolow") {
+      filtered.sort((a, b) => b.productPrice - a.productPrice)
     }
 
     dispatch(setProducts(filtered))
-  }, [search,category, brand, sortOrder, priceRange, allProducts, dispatch])
+  }, [search, category, brand, sortOrder, priceRange, allProducts, dispatch])
 
   useEffect(() => {
     getAllProducts()
@@ -98,7 +98,7 @@ const Products = () => {
         {/* Main product section */}
         <div className='flex flex-col flex-1'>
           <div className='flex justify-end mb-4'>
-            <Select onValueChange={(value)=>setSortOrder(value)}>
+            <Select onValueChange={(value) => setSortOrder(value)}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Sort by price" />
               </SelectTrigger>
@@ -115,9 +115,19 @@ const Products = () => {
           {/* product grid */}
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7'>
             {
-              products.map((product) => {
-                return <ProductCard key={product._id} product={product} loading={loading} />
-              })
+              Array.isArray(products) && products.length > 0 ? (
+                products
+                  .filter((product) => product && product._id)
+                  .map((product) => (
+                    <ProductCard
+                      key={product._id}
+                      product={product}
+                      loading={loading}
+                    />
+                  ))
+              ) : (
+                !loading && <p>No Products Found</p>
+              )
             }
           </div>
         </div>

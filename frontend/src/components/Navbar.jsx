@@ -11,7 +11,9 @@ import { useNavigate } from 'react-router-dom'
 const Navbar = () => {
   const { user } = useSelector(store => store.user)
   const dispatch = useDispatch()
+  const {cart} = useSelector(store=>store.product)
   const navigate = useNavigate()
+  const admin = user?.role === "admin" ? true : false
 
   const logoutHandler = async () => {
     try {
@@ -28,7 +30,7 @@ const Navbar = () => {
       toast.success("Logged out")
     }
   }
-
+  console.log(cart)
   return (
 
     <header className='bg-pink-50 fixed w-full z-20 border-b border-pink-200'>
@@ -40,11 +42,16 @@ const Navbar = () => {
           <ul className='flex gap-7 items-center text-xl font-semibold'>
             <Link className='' to={'/'}><li>Home</li></Link>
             <Link to={'/products'}><li>Products</li></Link>
-            {user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName}</li></Link>}
+            {
+              user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName}</li></Link>
+            }
+            {
+              admin && <Link to={`/dashboard/sales`}><li>Dashboard</li></Link>
+            }
           </ul>
           <Link to={'/cart'} className='relative'>
             <ShoppingCart />
-            <span className='bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2 text-xs'>0</span>
+            <span className='bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2 text-xs'>{cart?.items?.length || 0}</span>
           </Link>
           {user ? (
             <Button onClick={logoutHandler} className='bg-pink-600 text-white cursor-pointer'>Logout</Button>
