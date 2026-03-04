@@ -92,7 +92,7 @@ export const deleteProduct = async (req, res) => {
     }
     // delete product from mongodb
     await Product.findByIdAndDelete(productId);
-    return res.status(500).json({
+    return res.status(200).json({
       success: true,
       message: "Product Deleted Successfully",
     });
@@ -162,7 +162,7 @@ export const updateproduct = async (req, res) => {
     product.brand = brand || product.brand
     product.productImg = updatedImages
 
-    await product.save
+    await product.save()
 
     return res.status(200).json({
       success:true,
