@@ -1,3 +1,24 @@
+// import express from "express";
+// import { register, verify, login, logout, forgotPassword, verifyOTP, changePassword, allUsers, getUserById, updateUser } from "../controllers/userController.js";
+// import { isAdmin, isAuthenticated } from "../middleware/authenticated.js";
+// import { singleUpload } from "../middleware/multer.js";
+
+// const router = express.Router();
+
+// router.post("/register", register);
+// router.route("/verify").get(verify).post(verify);
+// router.post("/login", login);
+// router.post("/logout", isAuthenticated, logout);
+// router.post("/forgot-password", forgotPassword);
+// router.post("/verify-otp/:email", verifyOTP);
+// router.post("/change-password/:email", changePassword);
+// router.get("/all-user", isAuthenticated, isAdmin, allUsers);
+// router.get("/get-user/:userId", getUserById);
+// router.put("/update/:", isAuthenticated, singleUpload, updateUser);
+
+
+// export default router;
+
 import express from "express";
 import { register, verify, login, logout, forgotPassword, verifyOTP, changePassword, allUsers, getUserById, updateUser } from "../controllers/userController.js";
 import { isAdmin, isAuthenticated } from "../middleware/authenticated.js";

@@ -20,6 +20,7 @@ import UserInfo from './pages/admin/UserInfo'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import SingleProduct from './pages/SingleProduct'
 import AddProduct from './pages/admin/AddProduct'
+import AddressForm from './pages/AddressForm'
 
 
 const router = createBrowserRouter([
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <ProtectedRoutes><Navbar/><Card /></ProtectedRoutes>
+  },
+  {
+    path: "/address",
+    element: <ProtectedRoutes><AddressForm/></ProtectedRoutes>
   },
   {
     path:"/dashboard",
