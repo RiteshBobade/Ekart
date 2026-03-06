@@ -67,7 +67,7 @@ const AdminUsers = () => {
                 <Button 
                 onClick={()=>navigate(`/dashboard/users/${user?._id}`)} 
                 variant='outline'><Edit />Edit</Button>
-                <Button><Eye />Show Order</Button>
+                <Button onClick={()=>navigate(`/dashboard/users/orders/${user?._id}`)} ><Eye />Show Order</Button>
               </div>
             </div>
           })

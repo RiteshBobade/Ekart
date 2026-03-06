@@ -10,6 +10,7 @@ import userLogo from "../assets/Profile1.png"
 import { toast } from 'sonner'
 import axios from 'axios'
 import { setUser } from '../redux/userSlice'
+import MyOrder from './MyOrder'
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -48,8 +49,6 @@ const Profile = () => {
       setUpdateUser({ ...updateUser, profilePic: URL.createObjectURL(selectedFile) });
     }
   }
-
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -168,38 +167,13 @@ const Profile = () => {
                   ) : ("Update Profile"
                   )}
                 </Button>
-
-
-
               </form>
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="orders">
-          <Card className="shadow-sm border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-xl font-semibold">Password</CardTitle>
-              <CardDescription>
-                Change your password here. After saving, you'll be logged out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="current">Current password</Label>
-                <Input id="current" type="password" />
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="new">New password</Label>
-                <Input id="new" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full bg-black text-white hover:bg-gray-800">
-                Save password
-              </Button>
-            </CardFooter>
-          </Card>
+          <MyOrder/>
         </TabsContent>
       </Tabs>
     </div>
