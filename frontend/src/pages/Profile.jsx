@@ -73,7 +73,7 @@ const Profile = () => {
         formData.append("file", file);
       }
 
-      const res = await axios.put("http://localhost:8000/api/v1/user/update", formData, {
+      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         },

@@ -55,7 +55,7 @@ const UserInfo = () => {
         formData.append("file", file);
       }
 
-      const res = await axios.put("http://localhost:8000/api/v1/user/update", formData, {
+      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         },
@@ -91,7 +91,7 @@ const UserInfo = () => {
 
   const getUserDetails = async()=> {
     try {
-      const res = await axios.get(`http://localhost:8000/api/v1/user/getUser/${userId}`)
+      const res = await axios.get(`${import.meta.env.VITE_URL}/api/v1/user/getUser/${userId}`)
       // if(res.data.success) {
       //   setUpdateUser(res.data.user)
       // }

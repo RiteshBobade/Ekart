@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import ImageUpload from '@/components/ImageUpload'
+import ImageUpload from '@/components/imageUpload'
 import { Button } from '@/components/ui/button'
 import ProductDesc from '@/components/ProductDesc'
 import axios from 'axios'
@@ -56,7 +56,7 @@ const AddProduct = () => {
 
     try {
       setLoading(true)
-      const res = await axios.post(`http://localhost:8000/api/v1/product/add`, formData, {
+      const res = await axios.post(`${import.meta.env.VITE_URL}/api/v1/product/add`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
