@@ -12,21 +12,10 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const allowed = [
-    "http://localhost:5173",
-    process.env.FRONTEND_URL
-  ];
-  if (!origin || allowed.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-  }
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-  next();
-});
+app.use(cors({
+  origin: ["http://localhost:5173", "https://ekart-frontend-seven.vercel.app"],
+  credentials: true
+}));
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
