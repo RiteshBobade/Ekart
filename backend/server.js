@@ -13,7 +13,13 @@ const PORT = process.env.PORT || 8000;
 app.use(express.json());
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://ekart-frontend-seven.vercel.app"],
+  origin: function(origin, callback) {
+    if (!origin || origin.endsWith(".vercel.app") || origin === "http://localhost:5173") {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
