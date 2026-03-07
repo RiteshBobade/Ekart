@@ -32,38 +32,40 @@ const Navbar = () => {
   }
   console.log(cart)
   return (
-
-    <header className='bg-pink-50 fixed w-full z-20 border-b border-pink-200'>
-      <div className='max-w-7xl mx-auto flex justify-between items-center py-3 px-4'>
-        <Link to="/">
-          <img src="/Ekart.png" alt="Ekart Logo" className='w-[100px]' />
+    <header className='fixed top-0 w-full z-50 glass transition-all duration-300'>
+      <div className='max-w-7xl mx-auto flex justify-between items-center py-3 px-6 relative'>
+        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <img src="/Ekart.png" alt="Ekart Logo" className='w-[100px] drop-shadow-md' />
         </Link>
         <nav className='flex gap-10 items-center'>
-          <ul className='flex gap-7 items-center text-xl font-semibold'>
-            <Link className='' to={'/'}><li>Home</li></Link>
-            <Link to={'/products'}><li>Products</li></Link>
+          <ul className='hidden md:flex gap-8 items-center text-lg font-medium text-muted-foreground'>
+            <Link to={'/'} className='hover:text-primary transition-colors'><li>Home</li></Link>
+            <Link to={'/products'} className='hover:text-primary transition-colors'><li>Products</li></Link>
             {
-              user && <Link to={`/profile/${user._id}`}><li>Hello, {user.firstName}</li></Link>
+              user && <Link to={`/profile/${user._id}`} className='hover:text-primary transition-colors'><li>Hello, {user.firstName}</li></Link>
             }
             {
-              admin && <Link to={`/dashboard/sales`}><li>Dashboard</li></Link>
+              admin && <Link to={`/dashboard/sales`} className='hover:text-primary transition-colors'><li>Dashboard</li></Link>
             }
           </ul>
-          <Link to={'/cart'} className='relative'>
-            <ShoppingCart />
-            <span className='bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2 text-xs'>{cart?.items?.length || 0}</span>
-          </Link>
-          {user ? (
-            <Button onClick={logoutHandler} className='bg-pink-600 text-white cursor-pointer'>Logout</Button>
-          ) : (
-            <Link to="/login">
-              <Button onClick={() => navigate('/login')} className='bg-pink-600 text-white cursor-pointer'>Login</Button>
+          <div className="flex items-center gap-6">
+            <Link to={'/cart'} className='relative hover:scale-110 transition-transform'>
+              <ShoppingCart className="text-foreground hover:text-primary transition-colors" />
+              <span className='bg-primary rounded-full absolute text-primary-foreground -top-2 -right-3 px-2 text-xs font-bold border-2 border-background'>
+                {cart?.items?.length || 0}
+              </span>
             </Link>
-          )}
+            {user ? (
+              <Button onClick={logoutHandler} variant="default" className='shadow-lg hover:shadow-primary/25 transition-all'>Logout</Button>
+            ) : (
+              <Link to="/login">
+                <Button onClick={() => navigate('/login')} variant="default" className='shadow-lg hover:shadow-primary/25 transition-all'>Login</Button>
+              </Link>
+            )}
+          </div>
         </nav>
       </div>
     </header>
-
   )
 }
 

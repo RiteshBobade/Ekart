@@ -1,47 +1,64 @@
 import React from 'react'
 import { Button } from './ui/button'
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 const Hero = () => {
   return (
-    /* Updated to a soft, premium gradient to make the product pop */
-    <section className='bg-gradient-to-br from-pink-400 via-white to-pink-400 text-gray-800 py-16 overflow-hidden'>
-      <div className='max-w-7xl mx-auto px-4'>
-        <div className='grid md:grid-cols-2 gap-8 items-center'>
-          <div>
-            <h1 className='text-4xl md:text-6xl font-bold mb-4 tracking-tight text-gray-800'>
-              Latest Electronics at Best Prices
+    <section className='relative bg-background text-foreground py-10 md:py-16 min-h-[calc(100vh-76px)] flex items-center overflow-hidden'>
+      {/* Background glowing effects */}
+      <div className="absolute top-0 right-0 -z-10 w-[50vh] h-[50vh] bg-primary/20 rounded-full blur-[120px] opacity-60 mix-blend-screen pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -z-10 w-[40vh] h-[40vh] bg-accent/20 rounded-full blur-[100px] opacity-60 mix-blend-screen pointer-events-none" />
+
+      <div className='max-w-7xl mx-auto px-6 w-full'>
+        <div className='grid lg:grid-cols-2 gap-8 md:gap-12 items-center'>
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="space-y-6 md:space-y-8 z-10"
+          >
+            <h1 className='text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight'>
+              Next-Gen Tech, <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-500">
+                Unbeatable Deals
+              </span>
             </h1>
-            <p className='text-xl mb-6 text-gray-600'>
-              Discover cutting-edge technology with unbeatable deals on smartphones, laptops, and exclusive discounts.
+            <p className='text-lg md:text-xl text-muted-foreground leading-relaxed max-w-lg'>
+              Discover cutting-edge technology with exclusive discounts on smartphones, laptops, and premium gear. Upgrade your world today.
             </p>
-            <div className='flex flex-col sm:flex-row gap-4'>
-              {/* Button colors updated to match the new soft theme */}
-              <Button className='bg-pink-600 text-white hover:bg-pink-700 font-semibold px-8 py-6 text-lg'>
-                Shop Now
-              </Button>
-              <Button 
-                variant='outline' 
-                className='border-pink-600 text-pink-600 hover:bg-pink-50 bg-transparent px-8 py-6 text-lg'
-              >
-                View Deals
-              </Button>
+            <div className='flex flex-col sm:flex-row gap-4 pt-2 md:pt-4'>
+              <Link to="/products">
+                <Button className='w-full sm:w-auto px-8 py-6 text-lg rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/50 hover:scale-105 transition-all'>
+                  Shop Now
+                </Button>
+              </Link>
+              <Link to="/products">
+                <Button 
+                  variant='outline' 
+                  className='w-full sm:w-auto px-8 py-6 text-lg rounded-full border-2 hover:bg-secondary hover:scale-105 transition-all'
+                >
+                  View Deals
+                </Button>
+              </Link>
             </div>
-          </div>
+          </motion.div>
           
-          <div className='relative flex justify-center items-center'>
-            {/* 1. h-64 md:h-80: Controls height so it stays within the section.
-               2. drop-shadow-2xl: Puts the shadow around the phone shape, not the image box.
-               3. transition/hover: Keeps your cool hover effect.
-            */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className='relative flex justify-center items-center z-10'
+          >
             <img 
               src="Ekart-hero1.png" 
               alt="Electronics Showcase" 
-              className="mt-20 h-64 md:h-[450px] w-auto object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500 ease-out"
+              className="mt-6 md:mt-10 h-[30vh] sm:h-[40vh] lg:h-[450px] w-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] dark:drop-shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:scale-110 hover:-translate-y-4 transition-all duration-500 ease-out"
             />
             
-            {/* Optional: Subtle background glow behind the phone */}
-            <div className="absolute -z-10 w-64 h-64 bg-pink-200 rounded-full blur-3xl opacity-30"></div>
-          </div>
+            {/* Inner glow behind the image */}
+            <div className="absolute -z-10 w-64 h-64 md:w-80 md:h-80 bg-gradient-to-tr from-primary/30 to-transparent rounded-full blur-3xl opacity-50"></div>
+          </motion.div>
         </div>
       </div>
     </section>

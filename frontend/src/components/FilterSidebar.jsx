@@ -9,7 +9,6 @@ const FilterSidebar = ({ allProducts, priceRange,setPriceRange, search, setSearc
 
   const Brands = allProducts.map(p => p.brand)
   const UniqueBrand = ["All", ...new Set(Brands)]
-  console.log(UniqueBrand);
 
   const handleCategoryClick = (val)=> {
     setCategory(val)
@@ -35,56 +34,93 @@ const FilterSidebar = ({ allProducts, priceRange,setPriceRange, search, setSearc
   }
 
   return (
-    <div className='bg-gray-100 mt-10 p-4 rounmg
-     h-max hidden md:block w-64'>
+    <aside className='glass-card mt-2 p-6 rounded-2xl h-max flex flex-col w-full md:w-72 relative md:sticky md:top-24 shrink-0 shadow-lg border-border mb-8 md:mb-0'>
       {/* Search */}
-      <Input 
-      type="text" 
-      placeholder="Search...." 
-      className="bg-white p-2 rounded-md border-gray-400 border-2 w-full"
-      value={search}
-      onChange={(e)=>setSearch(e.target.value)}/>
+      <div className="mb-6">
+        <h2 className='font-bold text-lg mb-3 tracking-tight'>Search</h2>
+        <Input 
+          type="text" 
+          placeholder="Search products..." 
+          className="bg-background/50 border-input w-full focus:ring-primary shadow-sm"
+          value={search}
+          onChange={(e)=>setSearch(e.target.value)}
+        />
+      </div>
 
       {/* Category */}
-      <h1 className='mt-5 font-semibold text-xl'>Category</h1>
-      <div className='flex flex-col gap-2 mt-3'>
-        {
-          UniqueCategory.map((item, index) => (
-            <div key={index} className='flex items-center gap-2'>
-              <input type="radio" checked={category === item} onChange={()=>handleCategoryClick(item)}/>
-              <label htmlFor="">{item}</label>
-            </div>
-          ))
-        }
+      <div className="mb-6">
+        <h2 className='font-bold text-lg mb-3 tracking-tight'>Category</h2>
+        <div className='flex flex-col gap-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar'>
+          {
+            UniqueCategory.map((item, index) => (
+              <Label key={index} className='flex items-center gap-3 cursor-pointer group'>
+                <input 
+                  type="radio" 
+                  className="accent-primary w-4 h-4 cursor-pointer"
+                  checked={category === item} 
+                  onChange={()=>handleCategoryClick(item)}
+                />
+                <span className="text-muted-foreground group-hover:text-foreground transition-colors">{item}</span>
+              </Label>
+            ))
+          }
+        </div>
       </div>
 
       {/* Brands */}
-      <h1 className='mt-5 font-semibold text-xl'>Brands</h1>
-      <select className='bg-white w-full p-2 border-gray-200 border-2 rounded-md' value={brand} onChange={handleBrandChange}>
-        {
-          UniqueBrand.map((item, index) => {
-            return <option key={index} value={item}>{item.toUpperCase()}</option>
-          })
-        }
-      </select>
+      <div className="mb-6">
+        <h2 className='font-bold text-lg mb-3 tracking-tight'>Brands</h2>
+        <select 
+          className='w-full p-2.5 bg-background/50 border border-input rounded-md text-foreground focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm' 
+          value={brand} 
+          onChange={handleBrandChange}
+        >
+          {
+            UniqueBrand.map((item, index) => {
+              return <option key={index} value={item} className="bg-background text-foreground">{item.toUpperCase()}</option>
+            })
+          }
+        </select>
+      </div>
 
       {/* Price Range */}
-      <h1 className='mt-5 font-semibold text-xl mb-3'>Price Range</h1>
-      <div className='flex flex-col gap-2'>
-        <label>
-          Price Range: ₹{priceRange[0]} - ₹{priceRange[1]}
-        </label>
-        <div className='flex gap-2 items-center'>
-          <input type="number" value={priceRange[0]} onChange={handleMinChange} min="0" max="5000" className='w-20 p-1 border border-gray-300 rounded'/>
-          <span>-</span>
-          <input type="number" value={priceRange[1]} onChange={handleMaxChange} min="0" max="999999" className='w-20 p-1 border border-gray-300 rounded'/>
+      <div className="mb-6">
+        <h2 className='font-bold text-lg mb-3 tracking-tight'>Price Range</h2>
+        <div className='flex flex-col gap-4'>
+          <div className="text-sm font-medium text-primary">
+            ₹{priceRange[0]} - ₹{priceRange[1]}
+          </div>
+          <div className='flex gap-3 items-center'>
+            <Input 
+              type="number" 
+              value={priceRange[0]} 
+              onChange={handleMinChange} 
+              min="0" 
+              max="10000" 
+              className='w-full bg-background/50'
+            />
+            <span className="text-muted-foreground">-</span>
+            <Input 
+              type="number" 
+              value={priceRange[1]} 
+              onChange={handleMaxChange} 
+              min="0" 
+              max="999999" 
+              className='w-full bg-background/50'
+            />
+          </div>
         </div>
-        <input type="range" value={priceRange[0]} onChange={handleMinChange} min="0" max="5000" step="100" className='w-full' />
-        <input type="range" value={priceRange[1]} onChange={handleMaxChange}min="0" max="999999" step="100" className='w-full' />
       </div>
+
       {/* Reset Button */}
-      <Button onClick={resetFilters} className="bg-pink-600 text-white mt-5 cursor-pointer w-full">Reset Filters</Button>
-    </div>
+      <Button 
+        onClick={resetFilters} 
+        variant="outline"
+        className="mt-2 w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all shadow-sm cursor-pointer"
+      >
+        Reset Filters
+      </Button>
+    </aside>
   )
 }
 

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setCart } from '@/redux/productSlice'
 import { toast } from 'sonner'
+import { motion } from 'framer-motion'
 
 const ProductCard = ({ product, loading }) => {
   const { productImg, productPrice, productName } = product
@@ -27,35 +28,59 @@ const ProductCard = ({ product, loading }) => {
       }
     } catch (error) {
       console.error(error)
+      toast.error("Failed to add to cart")
     }
   }
+
   return (
-    <div className='shadow-lg rounded-lg overflow-hidden h-max'>
-      <div className='w-full h-full aspect-square overflow-hidden'>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className='glass-card rounded-xl overflow-hidden h-max group border border-border flex flex-col'
+    >
+      <div className='w-full aspect-square overflow-hidden relative bg-white/5 dark:bg-black/20'>
         {
-          loading ? <Skeleton className="w-full h-full rounded-lg" /> 
+          loading ? <Skeleton className="w-full h-full rounded-none" /> 
           : 
-          <img 
-          onClick={()=> navigate(`/products/${product._id}`)}
-          src={productImg[0]?.url} 
-          alt="" 
-          className='w-full h-full transition-transform duration-300 hover:scale-105' />
+          <>
+            <img 
+              onClick={()=> navigate(`/products/${product._id}`)}
+              src={productImg[0]?.url} 
+              alt={productName} 
+              className='w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer mix-blend-multiply dark:mix-blend-normal' 
+            />
+            {/* Overlay gradient on hover */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          </>
         }
-
       </div>
+      
       {
-        loading ? <div className='px-2 scroll-py-2 mask-y-to-2'>
-          <Skeleton className="w-[200px] h-4" />
-          <Skeleton className="w-[100px] h-4" />
-          <Skeleton className="w-[150px] h-8" />
-        </div> : <div className='px-2 space-y-1'>
-          <h1 className='font-semibold h-12 line-clamp-2'>{productName}</h1>
-          <h2 className='font-bold'>₹{productPrice}</h2>
-          <Button onClick={()=>addToCart(product._id)} className="bg-pink-600 mb-3 w-full cursor-pointer"><ShoppingCart/>Add to cart</Button>
-        </div>
+        loading ? (
+          <div className='p-4 space-y-3'>
+            <Skeleton className="w-full h-4" />
+            <Skeleton className="w-2/3 h-4" />
+            <Skeleton className="w-full h-10 mt-2" />
+          </div>
+        ) : (
+          <div className='p-4 flex flex-col flex-1 space-y-3 justify-between'>
+            <div>
+              <h1 className='font-semibold h-12 line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors cursor-pointer' onClick={()=> navigate(`/products/${product._id}`)}>
+                {productName}
+              </h1>
+              <h2 className='font-extrabold text-xl text-foreground mt-1'>₹{productPrice}</h2>
+            </div>
+            <Button 
+              onClick={()=>addToCart(product._id)} 
+              className="w-full shadow-lg hover:shadow-primary/25 transition-all group-hover:-translate-y-1 active:scale-95"
+            >
+              <ShoppingCart className="mr-2 h-4 w-4" />Add to cart
+            </Button>
+          </div>
+        )
       }
-
-    </div>
+    </motion.div>
   )
 }
 

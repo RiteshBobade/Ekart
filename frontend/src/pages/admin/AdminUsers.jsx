@@ -1,10 +1,11 @@
 import { Input } from '@/components/ui/input'
 import axios from 'axios'
-import { Edit, Eye, Search } from 'lucide-react'
+import { Edit, Eye, Search, Mail, Box, ShieldCheck, User } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import userLogo from "../../assets/userLogo.jpg"
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const AdminUsers = () => {
   const [users, setusers] = useState([])
@@ -24,11 +25,10 @@ const AdminUsers = () => {
       }
     } catch (error) {
       console.log(error);
-
     }
   }
 
-  const filteredUsers = users.filter(user=> 
+  const filteredUsers = users.filter(user => 
     `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -37,42 +37,112 @@ const AdminUsers = () => {
     getAllUsers()
   }, [])
 
-  console.log(users);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95, y: 20 },
+    visible: { opacity: 1, scale: 1, y: 0 }
+  }
 
   return (
-    <div className='pl-[350px] mt-6 py-20 pr-20 mx-auto px-4'>
-      <h1 className='font-bold text-2xl'>User Management</h1>
-      <p>View and manage registered users</p>
-      <div
-        className='flex relative w-[300px] mt-6'>
-        <Search
-          className='absolute left-2 top-1.5 text-gray-600 w-5' />
-        <Input
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} className="pl-10"
-          placeholder="Search Users..." />
+    <div className='w-full max-w-7xl mx-auto'>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <h1 className='text-3xl font-extrabold tracking-tight'>User Management</h1>
+          <p className="text-muted-foreground mt-2 text-lg">View, manage, and monitor all registered users in your system.</p>
+        </div>
+        
+        <div className='relative w-full md:w-[400px] shrink-0'>
+          <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5 z-10' />
+          <Input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)} 
+            className="pl-12 h-14 bg-background/50 border-input rounded-2xl shadow-sm text-base"
+            placeholder="Search by name or email..." 
+          />
+        </div>
       </div>
-      <div className='grid grid-cols-3 gap-7 mt-7'>
-        {
-          filteredUsers.map((user, index) => {
-            return <div key={index} className='bg-pink-100 p-5 rounded-lg'>
-              <div className='flex items-center gap-2'>
-                <img src={user?.profilePic || userLogo} alt="" className='rounded-full w-16 aspect-square object-cover border border-pink-600' />
-                <div>
-                  <h1 className='font-semibold'>{user?.firstName} {user?.lastName}</h1>
-                  <h3>{user?.email}</h3>
+
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+      >
+        <AnimatePresence>
+          {filteredUsers.length === 0 ? (
+             <motion.div 
+               initial={{ opacity: 0 }} 
+               animate={{ opacity: 1 }} 
+               className="col-span-full py-20 text-center glass-card rounded-3xl border border-border/50"
+             >
+               <User className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+               <h3 className="text-xl font-bold mb-2">No users found</h3>
+               <p className="text-muted-foreground">Try adjusting your search criteria.</p>
+             </motion.div>
+          ) : (
+            filteredUsers.map((user, index) => (
+              <motion.div 
+                layout
+                variants={itemVariants}
+                exit={{ opacity: 0, scale: 0.9 }}
+                key={user._id || index} 
+                className='glass-card p-6 rounded-3xl border border-border/50 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full bg-gradient-to-b from-background/50 to-secondary/10'
+              >
+                <div className='flex items-start gap-4 mb-6'>
+                  <div className="relative shrink-0">
+                    <img 
+                      src={user?.profilePic || userLogo} 
+                      alt="" 
+                      className='rounded-full w-20 h-20 object-cover border-4 border-background shadow-md' 
+                    />
+                    {user?.role === 'admin' && (
+                      <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground p-1 rounded-full shadow-lg">
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 min-w-0 pt-1">
+                    <h2 className='font-bold text-lg truncate flex items-center gap-2'>
+                      {user?.firstName} {user?.lastName}
+                    </h2>
+                    <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1 truncate">
+                      <Mail className="w-3.5 h-3.5 shrink-0" />
+                      <span className="truncate">{user?.email}</span>
+                    </div>
+                    <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/80 text-secondary-foreground uppercase tracking-wider">
+                      {user?.role || "User"}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className='flex gap-3 mt-3'>
-                <Button 
-                onClick={()=>navigate(`/dashboard/users/${user?._id}`)} 
-                variant='outline'><Edit />Edit</Button>
-                <Button onClick={()=>navigate(`/dashboard/users/orders/${user?._id}`)} ><Eye />Show Order</Button>
-              </div>
-            </div>
-          })
-        }
-      </div>
+
+                <div className='flex gap-3 mt-auto pt-4 border-t border-border/50'>
+                  <Button 
+                    onClick={() => navigate(`/dashboard/users/${user?._id}`)} 
+                    variant='outline' 
+                    className="flex-1 bg-background/50 hover:bg-secondary border-border/50 transition-colors"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />Edit Profile
+                  </Button>
+                  <Button 
+                    onClick={() => navigate(`/dashboard/users/orders/${user?._id}`)} 
+                    className="flex-1 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform"
+                  >
+                    <Box className="w-4 h-4 mr-2" />View Orders
+                  </Button>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   )
 }

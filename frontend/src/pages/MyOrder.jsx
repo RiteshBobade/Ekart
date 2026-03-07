@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 const MyOrder = () => {
   const [userOrder, setuserOrder] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const accessToken = localStorage.getItem("accessToken")
 
@@ -14,16 +15,21 @@ const MyOrder = () => {
         {
           headers: {
             Authorization: `Bearer ${accessToken}`
-          }
+          },
+          withCredentials: true
         }
       )
 
+      console.log("Fetched Orders Response:", res.data);
+
       if (res.data.success) {
-        setuserOrder(res.data.orders)
+        setuserOrder(res.data.orders || [])
       }
 
     } catch (error) {
       console.error("Error fetching orders:", error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -31,10 +37,18 @@ const MyOrder = () => {
     getUserOrders()
   }, [])
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-muted-foreground">Loading your orders...</p>
+      </div>
+    )
+  }
+
   return (
-    
     <>
-    <OrderCard userOrder={userOrder}/>
+      <OrderCard userOrder={Array.isArray(userOrder) ? userOrder : []}/>
     </>
   )
 }

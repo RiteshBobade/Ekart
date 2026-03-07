@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input'
-import { Edit, Search, Trash2, Loader2 } from 'lucide-react'
+import { Edit, Search, Trash2, Loader2, PackageSearch } from 'lucide-react'
 import React, { useMemo, useState } from 'react'
 import {
   Select,
@@ -39,9 +39,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { motion, AnimatePresence } from 'framer-motion'
+import { Badge } from '@/components/ui/badge'
 
 const AdminProduct = () => {
-  const { products = [] } = useSelector(store => store.product) // ✅ default empty array
+  const { products = [] } = useSelector(store => store.product)
   const dispatch = useDispatch()
 
   const [editProduct, setEditProduct] = useState(null)
@@ -53,9 +55,8 @@ const AdminProduct = () => {
 
   const accessToken = localStorage.getItem("accessToken")
 
-  // 🔎 Filter + Sort (safe)
   const filteredProducts = useMemo(() => {
-    let data = [...products.filter(Boolean)] // ✅ remove any null product
+    let data = [...products.filter(Boolean)]
 
     if (searchTerm) {
       data = data.filter(p =>
@@ -82,7 +83,6 @@ const AdminProduct = () => {
     }))
   }
 
-  // 🔥 UPDATE PRODUCT
   const handleSave = async (e) => {
     e.preventDefault()
     if (!editProduct) return
@@ -133,7 +133,6 @@ const AdminProduct = () => {
     }
   }
 
-  // 🔥 DELETE PRODUCT
   const deleteProductHandler = async (productId) => {
     setLoadingId(productId)
     try {
@@ -158,144 +157,219 @@ const AdminProduct = () => {
     }
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.05 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10, scale: 0.98 },
+    visible: { opacity: 1, y: 0, scale: 1 }
+  }
+
   return (
-    <div className='flex pl-[350px] gap-4 mt-6 py-20 pr-20 flex-col min-h-screen bg-gray-100'>
-
-      {/* TOP BAR */}
-      <div className='flex justify-between'>
-        <div className='relative bg-white rounded-lg'>
-          <Input
-            type="text"
-            placeholder="Search Product..."
-            className="w-[400px]"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Search className='absolute right-3 top-1.5 text-gray-500' />
+    <div className='w-full max-w-7xl mx-auto'>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+          <h1 className='text-3xl font-extrabold tracking-tight'>Product Inventory</h1>
+          <p className="text-muted-foreground mt-2 text-lg">Manage everything in your store catalog.</p>
         </div>
+        
+        <div className='flex flex-col sm:flex-row gap-4 w-full md:w-auto shrink-0'>
+          <div className='relative w-full sm:w-[350px]'>
+            <Search className='absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5 z-10' />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} 
+              className="pl-12 h-12 bg-background/50 border-input rounded-xl shadow-sm"
+              placeholder="Search products..." 
+            />
+          </div>
 
-        <Select onValueChange={(value) => setSortOrder(value)}>
-          <SelectTrigger className="w-[200px] bg-white">
-            <SelectValue placeholder="Sort by Price" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="lowToHigh">Price: Low to High</SelectItem>
-              <SelectItem value="highToLow">Price: High to Low</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+          <Select onValueChange={(value) => setSortOrder(value)}>
+            <SelectTrigger className="w-full sm:w-[200px] h-12 bg-background/50 border-input shadow-sm rounded-xl">
+              <SelectValue placeholder="Sort by Price" />
+            </SelectTrigger>
+            <SelectContent className="glass-card">
+              <SelectGroup>
+                <SelectItem value="lowToHigh">Price: Low to High</SelectItem>
+                <SelectItem value="highToLow">Price: High to Low</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      {/* PRODUCT LIST */}
-      {filteredProducts.map((product) => (
-        <Card key={product?._id} className="px-4 py-3 transition hover:shadow-md">
-          <div className='flex items-center justify-between'>
-            <div className='flex gap-4 items-center'>
-              <img
-                className='w-24 h-24 object-cover rounded'
-                src={product?.productImg?.[0]?.url || "/placeholder.png"} // ✅ FIX
-                alt={product?.productName || "product"}
-              />
-              <h1 className='font-bold text-base w-96 text-gray-700'>
-                {product?.productName || "Unnamed Product"}
-              </h1>
-            </div>
+      <motion.div 
+         variants={containerVariants}
+         initial="hidden"
+         animate="visible"
+         className='grid gap-4'
+      >
+        <AnimatePresence>
+          {filteredProducts.length === 0 ? (
+            <motion.div 
+               initial={{ opacity: 0 }} 
+               animate={{ opacity: 1 }} 
+               className="col-span-full py-24 text-center glass-card rounded-3xl border border-border/50"
+             >
+               <PackageSearch className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+               <h3 className="text-xl font-bold mb-2">No products found</h3>
+               <p className="text-muted-foreground">Try adjusting your search or filters.</p>
+             </motion.div>
+          ) : (
+            filteredProducts.map((product) => (
+              <motion.div 
+                layout
+                variants={itemVariants}
+                exit={{ opacity: 0, scale: 0.95 }}
+                key={product?._id}
+              >
+                <Card className="glass-card p-4 rounded-2xl border-border/50 shadow-sm hover:shadow-md transition-all group overflow-hidden">
+                  <div className='flex flex-col sm:flex-row items-center justify-between gap-6'>
+                    <div className='flex items-center gap-6 w-full sm:w-auto'>
+                      <div className="relative w-24 h-24 shrink-0 overflow-hidden rounded-xl bg-secondary">
+                         <img
+                          className='w-full h-full object-cover group-hover:scale-110 transition-transform duration-500'
+                          src={product?.productImg?.[0]?.url || "/placeholder.png"} 
+                          alt={product?.productName || "product"}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h2 className='font-bold text-lg text-foreground truncate max-w-[300px] sm:max-w-xs md:max-w-md'>
+                          {product?.productName || "Unnamed Product"}
+                        </h2>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="secondary" className="text-xs bg-secondary/80 text-secondary-foreground font-medium">
+                            {product?.category || "Uncategorized"}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">{product?.brand}</span>
+                        </div>
+                      </div>
+                    </div>
 
-            <h1 className='font-semibold text-gray-800'>
-              ₹{product?.productPrice || 0}
-            </h1>
+                    <div className="flex items-center justify-between sm:justify-end gap-8 w-full sm:w-auto mt-4 sm:mt-0 pt-4 sm:pt-0 border-t border-border/50 sm:border-0">
+                      <div className='font-black text-xl text-primary shrink-0'>
+                        ₹{product?.productPrice?.toLocaleString('en-IN') || 0}
+                      </div>
 
-            {/* ACTION BUTTONS */}
-            <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Dialog open={open && editProduct?._id === product?._id} onOpenChange={(val) => {
+                             setOpen(val);
+                             if(!val) setEditProduct(null);
+                        }}>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="bg-background/50 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors"
+                              onClick={() => {
+                                setEditProduct(product)
+                                setOpen(true)
+                              }}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                          </DialogTrigger>
 
-              {/* EDIT */}
-              <Dialog open={open} onOpenChange={setOpen}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setEditProduct(product)
-                      setOpen(true)
-                    }}
-                  >
-                    <Edit className="text-green-500 w-5 h-5" />
-                  </Button>
-                </DialogTrigger>
+                          <DialogContent className="sm:max-w-2xl glass-card border flex flex-col h-[90vh] sm:h-auto max-h-[85vh] p-0 overflow-hidden rounded-3xl">
+                            <DialogHeader className="p-6 pb-4 border-b border-border/50 shrink-0 bg-background/80 backdrop-blur-md z-10">
+                              <DialogTitle className="text-2xl font-bold">Edit Product</DialogTitle>
+                              <DialogDescription>
+                                Update product details and media below.
+                              </DialogDescription>
+                            </DialogHeader>
 
-                <DialogContent className="sm:max-w-2xl w-[625px] max-h-[640px] overflow-y-scroll">
-                  <DialogHeader>
-                    <DialogTitle>Edit Product</DialogTitle>
-                    <DialogDescription>
-                      Update product details below.
-                    </DialogDescription>
-                  </DialogHeader>
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-border/50 scrollbar-track-transparent">
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground ml-1">Product Name</Label>
+                                <Input className="bg-background/50 border-input h-12" value={editProduct?.productName || ''} onChange={handleChange} name="productName" />
+                              </div>
 
-                  <div className="flex flex-col gap-3">
-                    <Label>Product Name</Label>
-                    <Input value={editProduct?.productName} onChange={handleChange} name="productName" />
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium text-muted-foreground ml-1">Price (₹)</Label>
+                                  <Input className="bg-background/50 border-input h-12 font-mono" type="number" value={editProduct?.productPrice || ''} onChange={handleChange} name="productPrice" />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-sm font-medium text-muted-foreground ml-1">Brand</Label>
+                                  <Input className="bg-background/50 border-input h-12" value={editProduct?.brand || ''} onChange={handleChange} name="brand" />
+                                </div>
+                              </div>
 
-                    <Label>Price</Label>
-                    <Input type="number" value={editProduct?.productPrice} onChange={handleChange} name="productPrice" />
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground ml-1">Category</Label>
+                                <Input className="bg-background/50 border-input h-12" value={editProduct?.category || ''} onChange={handleChange} name="category" />
+                              </div>
 
-                    <Label>Brand</Label>
-                    <Input value={editProduct?.brand} onChange={handleChange} name="brand" />
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground ml-1">Description</Label>
+                                <Textarea className="bg-background/50 border-input min-h-[120px] resize-y p-3" value={editProduct?.productDesc || ''} onChange={handleChange} name="productDesc" />
+                              </div>
 
-                    <Label>Category</Label>
-                    <Input value={editProduct?.category} onChange={handleChange} name="category" />
+                              <div className="space-y-2 bg-secondary/20 p-4 rounded-xl border border-border/50">
+                                <Label className="text-sm font-medium text-muted-foreground ml-1 mb-2 block">Product Media</Label>
+                                <ImageUpload productData={editProduct} setProductData={setEditProduct} />
+                              </div>
+                            </div>
 
-                    <Label>Description</Label>
-                    <Textarea value={editProduct?.productDesc} onChange={handleChange} name="productDesc" />
+                            <DialogFooter className="p-6 pt-4 border-t border-border/50 shrink-0 bg-background/80 backdrop-blur-md z-10 flex flex-col sm:flex-row gap-3">
+                              <DialogClose asChild>
+                                <Button className="w-full sm:w-auto h-12" variant="outline">Cancel</Button>
+                              </DialogClose>
+                              <Button className="w-full sm:w-auto h-12 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform" onClick={handleSave} disabled={updating}>
+                                {updating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                                Save Changes
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
 
-                    <ImageUpload productData={editProduct} setProductData={setEditProduct} />
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              disabled={loadingId === product._id}
+                              className="bg-background/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-colors"
+                            >
+                              {loadingId === product._id
+                                ? <Loader2 className="w-4 h-4 animate-spin text-destructive" />
+                                : <Trash2 className="w-4 h-4 text-destructive" />
+                              }
+                            </Button>
+                          </AlertDialogTrigger>
+
+                          <AlertDialogContent className="glass-card border-border/50 rounded-3xl">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-xl font-bold">Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription className="text-base text-muted-foreground">
+                                This will permanently delete <span className="font-semibold text-foreground">{product?.productName}</span> and remove its data from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter className="mt-4 gap-2">
+                              <AlertDialogCancel className="h-11">Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="h-11 bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+                                onClick={() => deleteProductHandler(product._id)}
+                              >
+                                Delete Product
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
                   </div>
-
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-                    <Button onClick={handleSave} disabled={updating}>
-                      {updating && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                      Save Changes
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-
-              {/* DELETE */}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="icon" disabled={loadingId === product._id}>
-                    {loadingId === product._id
-                      ? <Loader2 className="w-5 h-5 animate-spin" />
-                      : <Trash2 className="text-red-500 w-5 h-5" />
-                    }
-                  </Button>
-                </AlertDialogTrigger>
-
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => deleteProductHandler(product._id)}
-                    >
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
-            </div>
-          </div>
-        </Card>
-      ))}
+                </Card>
+              </motion.div>
+            ))
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   )
 }

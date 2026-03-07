@@ -13,8 +13,7 @@ import ProductCard from '@/components/ProductCard'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { setProducts } from '@/redux/productSlice'
-
-
+import { motion } from 'framer-motion'
 
 const Products = () => {
 
@@ -38,7 +37,7 @@ const Products = () => {
       }
     } catch (error) {
       console.log(error)
-      toast.error(error.response.data.message)
+      toast.error(error.response?.data?.message || "Error fetching products")
 
     } finally {
       setLoading(false)
@@ -78,57 +77,87 @@ const Products = () => {
     getAllProducts()
   }, [])
 
-  console.log(allProducts);
-
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  }
 
   return (
-    <div className='pt-25 pb-10'>
-      <div className='max-w-7xl mx-auto flex gap-7'>
-        {/* sidebar */}
-        <FilterSidebar
-          allProducts={allProducts}
-          search={search}
-          setSearch={setSearch}
-          brand={brand}
-          setBrand={setBrand}
-          category={category}
-          setCategory={setCategory}
-          priceRange={priceRange}
-          setPriceRange={setPriceRange} />
-        {/* Main product section */}
-        <div className='flex flex-col flex-1'>
-          <div className='flex justify-end mb-4'>
-            <Select onValueChange={(value) => setSortOrder(value)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Sort by price" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
+    <div className='pt-8 pb-16 bg-background min-h-screen'>
+      <div className='max-w-7xl mx-auto px-6'>
+        
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-extrabold tracking-tight">All Products</h1>
+          <p className="text-muted-foreground mt-2">Browse the best electronics and gadgets.</p>
+        </div>
 
-                  <SelectItem value="lowtohigh">Price: Low to High</SelectItem>
-                  <SelectItem value="hightolow">Price: High to Low</SelectItem>
-
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          {/* product grid */}
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7'>
-            {
-              Array.isArray(products) && products.length > 0 ? (
-                products
-                  .filter((product) => product && product._id)
-                  .map((product) => (
-                    <ProductCard
-                      key={product._id}
-                      product={product}
-                      loading={loading}
-                    />
-                  ))
-              ) : (
-                !loading && <p>No Products Found</p>
-              )
-            }
+        <div className='flex flex-col md:flex-row gap-8'>
+          {/* sidebar */}
+          <FilterSidebar
+            allProducts={allProducts}
+            search={search}
+            setSearch={setSearch}
+            brand={brand}
+            setBrand={setBrand}
+            category={category}
+            setCategory={setCategory}
+            priceRange={priceRange}
+            setPriceRange={setPriceRange} 
+          />
+          
+          {/* Main product section */}
+          <div className='flex flex-col flex-1 pb-10'>
+            <div className='flex justify-between items-center mb-6'>
+              <div className="text-sm text-muted-foreground font-medium">
+                Showing {Array.isArray(products) ? products.length : 0} results
+              </div>
+              <Select onValueChange={(value) => setSortOrder(value)}>
+                <SelectTrigger className="w-[200px] border border-border bg-background focus:ring-primary shadow-sm glass-card">
+                  <SelectValue placeholder="Sort by price" />
+                </SelectTrigger>
+                <SelectContent className="glass-card border-border">
+                  <SelectGroup>
+                    <SelectItem value="none">Default Sorting</SelectItem>
+                    <SelectItem value="lowtohigh">Price: Low to High</SelectItem>
+                    <SelectItem value="hightolow">Price: High to Low</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {/* product grid */}
+            <motion.div 
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+            >
+              {
+                Array.isArray(products) && products.length > 0 ? (
+                  products
+                    .filter((product) => product && product._id)
+                    .map((product) => (
+                      <ProductCard
+                        key={product._id}
+                        product={product}
+                        loading={loading}
+                      />
+                    ))
+                ) : (
+                  !loading && (
+                    <div className="col-span-full py-20 text-center flex flex-col items-center justify-center glass-card rounded-2xl">
+                      <p className="text-xl text-muted-foreground">No Products Found matching your filters.</p>
+                      <button onClick={() => {setSearch(''); setCategory('All'); setBrand('All'); setPriceRange([0, 999999])}} className="mt-4 text-primary hover:underline">Clear Filters</button>
+                    </div>
+                  )
+                )
+              }
+            </motion.div>
           </div>
         </div>
       </div>

@@ -9,6 +9,8 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { motion, AnimatePresence } from 'framer-motion'
+import { MapPin, Trash2, CheckCircle2 } from 'lucide-react'
 
 const AddressForm = () => {
   const dispatch = useDispatch()
@@ -31,6 +33,7 @@ const AddressForm = () => {
   const shipping = subTotal > 50 ? 0 : 10
   const tax = parseFloat((subTotal * 0.05).toFixed(2))
   const total = subTotal + shipping + tax
+  const validTotal = isNaN(total) ? 0 : total
 
   const handlePayment = async () => {
     const accessToken = localStorage.getItem("accessToken")
@@ -49,7 +52,7 @@ const AddressForm = () => {
     try {
       // Step 1: Create order on backend
       const { data } = await axios.post(`${import.meta.env.VITE_URL}/api/v1/orders/create-order`, {
-        amount: total,
+        amount: validTotal,
         tax,
         shipping,
         products: cart?.items?.map(item => ({
@@ -106,52 +109,174 @@ const AddressForm = () => {
   }
 
   return (
-    <div className='max-w-7xl mx-auto grid place-items-center p-10'>
-      <div className='grid grid-cols-2 items-start gap-20 mt-10 max-w-7xl mx-auto'>
-        <div className='space-y-4 p-6 bg-white'>
-          {showForm ? (
-            <>
-              <div><Label htmlFor="fullName">Full Name</Label><Input id="fullName" name="fullName" required value={formData.fullName} onChange={handleChange} /></div>
-              <div><Label htmlFor="phone">Phone Number</Label><Input id="phone" name="phone" required value={formData.phone} onChange={handleChange} /></div>
-              <div><Label htmlFor="email">Email</Label><Input id="email" name="email" required value={formData.email} onChange={handleChange} /></div>
-              <div><Label htmlFor="address">Address</Label><Input id="address" name="address" required value={formData.address} onChange={handleChange} /></div>
-              <div className='grid grid-cols-2 gap-4'>
-                <div><Label htmlFor="city">City</Label><Input id="city" name="city" required value={formData.city} onChange={handleChange} /></div>
-                <div><Label htmlFor="state">State</Label><Input id="state" name="state" required value={formData.state} onChange={handleChange} /></div>
-              </div>
-              <div className='grid grid-cols-2 gap-4'>
-                <div><Label htmlFor="zip">Zip Code</Label><Input id="zip" name="zip" required value={formData.zip} onChange={handleChange} /></div>
-                <div><Label htmlFor="country">Country</Label><Input id="country" name="country" required value={formData.country} onChange={handleChange} /></div>
-              </div>
-              <Button onClick={handleSave} className="w-full">Save & continue</Button>
-            </>
-          ) : (
-            <div className='space-y-4'>
-              <h2 className='text-lg font-semibold'>Saved Addresses</h2>
-              {addresses.map((addr, index) => (
-                <div onClick={() => dispatch(setSelectedAddress(index))} key={index} className={`border p-4 rounded-md cursor-pointer relative ${selectedAddress === index ? "border-pink-600 bg-pink-50" : "border-gray-300"}`}>
-                  <p className='font-medium'>{addr.fullName}</p>
-                  <p>{addr.phone}</p><p>{addr.email}</p>
-                  <p>{addr.address}, {addr.city}, {addr.state}, {addr.zip}, {addr.country}</p>
-                  <button onClick={(e) => { e.stopPropagation(); dispatch(deleteAddress(index)); }} className='absolute top-2 right-2 text-red-500 text-sm'>Delete</button>
+    <div className='pt-12 md:pt-16 pb-12 min-h-screen bg-background relative overflow-hidden flex justify-center'>
+      {/* Subtle background gradients for premium feel */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className='w-full max-w-6xl mx-auto px-4 z-10'>
+        <h1 className='text-3xl md:text-4xl font-extrabold text-foreground mb-6 md:mb-8 tracking-tight'>Checkout</h1>
+        
+        <div className='flex flex-col lg:flex-row gap-10 items-start'>
+          
+          <div className='flex-1 w-full'>
+            <AnimatePresence mode="wait">
+              {showForm ? (
+                <motion.div 
+                  key="form"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className='space-y-4 glass-card p-6 md:p-8 rounded-2xl border border-border/50 shadow-xl w-full'
+                >
+                  <h2 className='text-xl md:text-2xl font-bold mb-4 border-b border-border/50 pb-3'>Shipping Address</h2>
+                  <div className="grid gap-4 md:gap-5">
+                    <div>
+                      <Label htmlFor="fullName" className="text-sm font-medium text-muted-foreground ml-1">Full Name</Label>
+                      <Input id="fullName" name="fullName" required value={formData.fullName} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                    </div>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5'>
+                      <div>
+                        <Label htmlFor="phone" className="text-sm font-medium text-muted-foreground ml-1">Phone Number</Label>
+                        <Input id="phone" name="phone" required value={formData.phone} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                      <div>
+                        <Label htmlFor="email" className="text-sm font-medium text-muted-foreground ml-1">Email</Label>
+                        <Input id="email" name="email" required value={formData.email} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="address" className="text-sm font-medium text-muted-foreground ml-1">Address</Label>
+                      <Input id="address" name="address" required value={formData.address} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                    </div>
+                    <div className='grid grid-cols-2 gap-4 md:gap-5'>
+                      <div>
+                        <Label htmlFor="city" className="text-sm font-medium text-muted-foreground ml-1">City</Label>
+                        <Input id="city" name="city" required value={formData.city} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                      <div>
+                        <Label htmlFor="state" className="text-sm font-medium text-muted-foreground ml-1">State</Label>
+                        <Input id="state" name="state" required value={formData.state} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                    </div>
+                    <div className='grid grid-cols-2 gap-4 md:gap-5'>
+                      <div>
+                        <Label htmlFor="zip" className="text-sm font-medium text-muted-foreground ml-1">Zip Code</Label>
+                        <Input id="zip" name="zip" required value={formData.zip} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                      <div>
+                        <Label htmlFor="country" className="text-sm font-medium text-muted-foreground ml-1">Country</Label>
+                        <Input id="country" name="country" required value={formData.country} onChange={handleChange} className="bg-background/50 border-input h-10" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 mt-6 pt-2">
+                    {addresses?.length > 0 && (
+                      <Button onClick={() => setShowForm(false)} variant="outline" className="flex-1 h-10 rounded-xl">Cancel</Button>
+                    )}
+                    <Button onClick={handleSave} className="flex-1 h-10 text-base shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all rounded-xl">Save Address</Button>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div 
+                  key="saved"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className='space-y-6'
+                >
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className='text-2xl font-bold'>Select Delivery Address</h2>
+                  </div>
+                  
+                  <div className="grid gap-4">
+                    {addresses.map((addr, index) => (
+                      <motion.div 
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        onClick={() => dispatch(setSelectedAddress(index))} 
+                        key={index} 
+                        className={`p-5 rounded-2xl cursor-pointer relative border-2 transition-all ${selectedAddress === index ? "border-primary bg-primary/5 shadow-md shadow-primary/10" : "border-border/50 glass hover:border-border"}`}
+                      >
+                        {selectedAddress === index && (
+                          <div className="absolute top-5 right-5 text-primary">
+                            <CheckCircle2 className="w-6 h-6" />
+                          </div>
+                        )}
+                        <div className="flex items-start gap-4">
+                          <MapPin className={`w-6 h-6 mt-1 flex-shrink-0 ${selectedAddress === index ? 'text-primary' : 'text-muted-foreground'}`} />
+                          <div className="pr-12">
+                            <h3 className='font-bold text-lg mb-1'>{addr.fullName}</h3>
+                            <p className="text-muted-foreground text-sm mb-2">{addr.phone} • {addr.email}</p>
+                            <p className="text-foreground leading-relaxed">{addr.address}, {addr.city}, {addr.state}, {addr.zip}, {addr.country}</p>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); dispatch(deleteAddress(index)); }} 
+                          className='absolute bottom-5 right-5 text-destructive/70 hover:text-destructive p-2 hover:bg-destructive/10 rounded-full transition-colors'
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  <Button onClick={() => setShowForm(true)} variant='outline' className="w-full h-12 mt-4 border-dashed border-2 hover:border-primary hover:text-primary transition-colors text-base font-medium rounded-xl">
+                    + Add New Address
+                  </Button>
+                  
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="w-full lg:w-[350px] shrink-0 xl:w-[380px] lg:sticky lg:top-24"
+          >
+            <Card className="glass-card border-border/50 shadow-xl overflow-hidden rounded-3xl">
+              <CardHeader className="bg-secondary/30 border-b border-border/50 pb-4 pt-5 px-5">
+                <CardTitle className="text-lg font-bold">Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 p-5">
+                <div className='flex items-center justify-between text-muted-foreground text-sm'>
+                  <span>Subtotal ({cart?.items?.length || 0} items)</span>
+                  <span className="font-semibold text-foreground">₹{isNaN(subTotal) ? '0' : subTotal.toLocaleString("en-IN")}</span>
                 </div>
-              ))}
-              <Button onClick={() => setShowForm(true)} variant='outline' className="w-full">+ Add New Address</Button>
-              <Button onClick={handlePayment} disabled={selectedAddress === null} className="w-full bg-pink-600">Proceed to checkout</Button>
-            </div>
-          )}
-        </div>
-        <div>
-          <Card className="w-[400px]">
-            <CardHeader><CardTitle>Order Summary</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <div className='flex justify-between'><span>Subtotal ({cart.items.length}) items</span><span>₹{subTotal.toLocaleString("en-IN")}</span></div>
-              <div className='flex justify-between'><span>Shipping</span><span>₹{shipping}</span></div>
-              <div className='flex justify-between'><span>Tax</span><span>₹{tax}</span></div>
-              <Separator />
-              <div className='flex justify-between font-bold text-lg'><span>Total</span><span>₹{total}</span></div>
-            </CardContent>
-          </Card>
+                <div className='flex items-center justify-between text-muted-foreground text-sm'>
+                  <span>Shipping</span>
+                  <span className="font-semibold text-foreground">{shipping === 0 ? <span className="text-emerald-500 font-bold">Free</span> : `₹${shipping}`}</span>
+                </div>
+                <div className='flex items-center justify-between text-muted-foreground text-sm'>
+                  <span>Tax (5%)</span>
+                  <span className="font-semibold text-foreground">₹{isNaN(tax) ? '0' : tax.toFixed(2)}</span>
+                </div>
+                
+                <Separator className="bg-border/60 my-2" />
+                
+                <div className='flex justify-between items-center'>
+                  <span className="font-bold text-lg uppercase tracking-wider text-muted-foreground">Total</span>
+                  <span className="font-black text-2xl text-primary">₹{validTotal.toFixed(2)}</span>
+                </div>
+                
+                <div className="pt-3">
+                  <Button 
+                    onClick={handlePayment} 
+                    disabled={selectedAddress === null || showForm} 
+                    className="w-full h-12 text-base font-bold shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all rounded-xl"
+                  >
+                    Proceed to Payment
+                  </Button>
+                  {selectedAddress === null && !showForm && (
+                     <p className="text-xs text-destructive text-center mt-2 font-medium">Please select a delivery address to continue.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </div>

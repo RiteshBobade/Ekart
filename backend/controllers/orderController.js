@@ -139,12 +139,11 @@ export const getuserOrder = async (req, res) => {
   }
 };
 
-// --- Function 3: Get All Orders ---
 export const getAllOrdersAdmin = async (req, res) => {
   try {
     const orders = await Order.find()
       .sort({ createdAt: -1 })
-      .populate("user", "name email")
+      .populate("user", "firstName lastName email")
       .populate("products.productId", "productName productPrice");
 
     res.json({
@@ -156,7 +155,7 @@ export const getAllOrdersAdmin = async (req, res) => {
     console.log(error);
     res.status(500).json({
       success: false,
-      message: "Failded to fetch all orders",
+      message: "Failed to fetch all orders",
       error: error.message,
     });
   }
