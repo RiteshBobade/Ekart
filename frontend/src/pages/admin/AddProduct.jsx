@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import ImageUpload from '@/components/imageUpload'
+import ImageUpload from '@/components/ImageUpload'
 import { Button } from '@/components/ui/button'
 import ProductDesc from '@/components/ProductDesc'
 import axios from 'axios'
