@@ -53,7 +53,7 @@ const UserInfo = () => {
         formData.append("file", file);
       }
 
-      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/update`, formData, {
+      const res = await axios.put(`${import.meta.env.VITE_URL}/api/v1/user/adminUpdate/${userId}`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         },
@@ -62,7 +62,8 @@ const UserInfo = () => {
 
       if (res.data.success) {
         toast.success(res.data.message);
-        dispatch(setUser(res.data.user));
+        // Do not update Redux standard state when editing someone else's profile as Admin
+        // dispatch(setUser(res.data.user));
       }
     } catch (error) {
       console.error("Update Error:", error);

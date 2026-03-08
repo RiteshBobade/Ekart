@@ -56,10 +56,10 @@ const Navbar = () => {
               </span>
             </Link>
             {user ? (
-              <Button onClick={logoutHandler} variant="default" className='shadow-lg hover:shadow-primary/25 transition-all'>Logout</Button>
+              <Button onClick={logoutHandler} variant="default" className='cursor-pointer shadow-lg hover:shadow-primary/25 transition-all'>Logout</Button>
             ) : (
               <Link to="/login">
-                <Button onClick={() => navigate('/login')} variant="default" className='shadow-lg hover:shadow-primary/25 transition-all'>Login</Button>
+                <Button onClick={() => navigate('/login')} variant="default" className='cursor-pointer shadow-lg hover:shadow-primary/25 transition-all'>Login</Button>
               </Link>
             )}
           </div>

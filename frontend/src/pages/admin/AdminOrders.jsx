@@ -29,7 +29,8 @@ const AdminOrders = () => {
 
   const filteredOrders = orders.filter(order => 
     order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
@@ -113,7 +114,9 @@ const AdminOrders = () => {
                         #{order._id.slice(-8).toUpperCase()}
                       </td>
                       <td className='px-6 py-5'>
-                        <div className="font-bold text-foreground text-sm">{order.user?.name || "Unknown User"}</div>
+                        <div className="font-bold text-foreground text-sm">
+                          {order.user ? `${order.user.firstName || ''} ${order.user.lastName || ''}`.trim() : "Unknown User"}
+                        </div>
                         <div className="text-xs text-muted-foreground mt-0.5">{order.user?.email || "No Email"}</div>
                       </td>
                       <td className='px-6 py-5'>

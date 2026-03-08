@@ -353,7 +353,7 @@ export const updateUser = async (req, res) => {
       user.profilePicPublicId = result.public_id;
     }
 
-    // Update only provided fields
+// Update only provided fields
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (address) user.address = address;
@@ -375,6 +375,99 @@ export const updateUser = async (req, res) => {
     });
   } catch (error) {
     console.error("UPDATE ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* ADMIN UPDATE USER */
+export const adminUpdateUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    // Admins only (handled by isAdmin middleware on the route)
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Target user not found",
+      });
+    }
+
+    const { firstName, lastName, address, city, zipCode, phoneNo, role } = req.body;
+
+    // 🖼 Upload new image if exists
+    if (req.file && req.file.buffer) {
+      if (user.profilePicPublicId) {
+        await cloudinary.uploader.destroy(user.profilePicPublicId);
+      }
+      const result = await uploadToCloudinary(req.file.buffer);
+      user.profilePic = result.secure_url;
+      user.profilePicPublicId = result.public_id;
+    }
+
+    // Update only provided fields
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (address) user.address = address;
+    if (city) user.city = city;
+    if (zipCode) user.zipCode = zipCode;
+    if (phoneNo) user.phoneNo = phoneNo;
+    if (role) user.role = role;
+
+    const updatedUser = await user.save();
+    const userObj = updatedUser.toObject();
+    delete userObj.password;
+    delete userObj.token;
+
+    return res.status(200).json({
+      success: true,
+      message: "User profile updated successfully by Admin",
+      user: userObj,
+    });
+  } catch (error) {
+    console.error("ADMIN UPDATE ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+/* DELETE USER BY ID */
+export const deleteUser = async (req, res) => {
+  console.log("DELETE USER ROUTE HIT:", req.params.userId);
+  try {
+    const { userId } = req.params;
+
+    // Prevent user from deleting themselves by accident if needed, or deleting other admins
+    const targetUser = await User.findById(userId);
+    console.log("TARGET USER:", targetUser);
+    if (!targetUser) {
+      console.log("User not found in DB");
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // Optional: Protect admin accounts from deletion
+    if (targetUser.role === 'admin' && req.user._id.toString() !== targetUser._id.toString()) {
+       // Allow admins to delete other admins? Usually we'll allow it for now, 
+       // but log it just in case.
+       console.log(`Admin ${req.user.email} deleting another admin ${targetUser.email}`);
+    }
+
+    await User.findByIdAndDelete(userId);
+    // Also delete any sessions for this user
+    await Session.deleteMany({ userId });
+    
+    console.log("Successfully deleted user:", userId);
+    return res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.error("DELETE USER ERROR:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

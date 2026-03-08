@@ -1,11 +1,12 @@
 import { Input } from '@/components/ui/input'
 import axios from 'axios'
-import { Edit, Eye, Search, Mail, Box, ShieldCheck, User } from 'lucide-react'
+import { Edit, Eye, Search, Mail, Box, ShieldCheck, User, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import userLogo from "../../assets/userLogo.jpg"
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'sonner'
 
 const AdminUsers = () => {
   const [users, setusers] = useState([])
@@ -32,6 +33,29 @@ const AdminUsers = () => {
     `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
+
+    const accessToken = localStorage.getItem("accessToken")
+    try {
+      const res = await axios.delete(`${import.meta.env.VITE_URL}/api/v1/user/deleteUser/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+      if (res.data.success) {
+        toast.success(res.data.message)
+        setusers(users.filter(u => u._id !== userId))
+      }
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error.response?.data?.message || "Failed to delete user";
+      toast.error(errorMessage);
+    }
+  }
 
   useEffect(() => {
     getAllUsers()
@@ -136,6 +160,14 @@ const AdminUsers = () => {
                     className="flex-1 shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-transform"
                   >
                     <Box className="w-4 h-4 mr-2" />View Orders
+                  </Button>
+                  <Button 
+                    variant='outline'
+                    onClick={() => handleDeleteUser(user?._id)} 
+                    className="shadow-sm border-red-500 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors px-3"
+                    title="Delete User"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </motion.div>

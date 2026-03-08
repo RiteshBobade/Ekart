@@ -20,7 +20,7 @@
 // export default router;
 
 import express from "express";
-import { register, verify, login, logout, forgotPassword, verifyOTP, changePassword, allUsers, getUserById, updateUser } from "../controllers/userController.js";
+import { register, verify, login, logout, forgotPassword, verifyOTP, changePassword, allUsers, getUserById, updateUser, adminUpdateUser, deleteUser } from "../controllers/userController.js";
 import { isAdmin, isAuthenticated } from "../middleware/authenticated.js";
 import { singleUpload } from "../middleware/multer.js";
 
@@ -36,6 +36,7 @@ router.post("/changePassword/:email", changePassword);
 router.get("/allUser", isAuthenticated, isAdmin, allUsers);
 router.get("/getUser/:userId", getUserById);
 router.put("/update", isAuthenticated, singleUpload, updateUser);
-
+router.put("/adminUpdate/:userId", isAuthenticated, isAdmin, singleUpload, adminUpdateUser);
+router.delete("/deleteUser/:userId", isAuthenticated, isAdmin, deleteUser);
 
 export default router;

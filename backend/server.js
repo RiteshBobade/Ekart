@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use(cors({
   origin: function(origin, callback) {
-    if (!origin || origin.endsWith(".vercel.app") || origin === "http://localhost:5173") {
+    if (!origin || origin.endsWith(".vercel.app") || origin === "http://localhost:5173" || origin === process.env.FRONTEND_URL) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
