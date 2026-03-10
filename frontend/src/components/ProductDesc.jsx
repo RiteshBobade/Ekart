@@ -46,11 +46,11 @@ const ProductDesc = ({ product }) => {
             {product.brand}
           </span>
         </div>
-        <h1 className='font-extrabold text-4xl text-foreground tracking-tight leading-tight'>{product.productName}</h1>
+        <h1 className='font-extrabold text-3xl text-foreground tracking-tight leading-tight'>{product.productName}</h1>
       </div>
       
       <div className="flex items-end gap-4">
-        <h2 className='text-primary font-black text-5xl tracking-tighter'>₹{product.productPrice}</h2>
+        <h2 className='text-primary font-black text-4xl tracking-tighter'>₹{product.productPrice}</h2>
         <p className="text-muted-foreground mb-2 line-through decoration-muted-foreground/50">₹{(product.productPrice * 1.2).toFixed(2)}</p>
       </div>
 
