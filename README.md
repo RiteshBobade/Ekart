@@ -1,10 +1,10 @@
-# 🛒 Ekart: Premium E-Commerce Experience
-
-Ekart is a fully modern, responsive full-stack e-commerce web application designed with a premium dark-themed architecture, Ekart provides an incredibly smooth shopping experience for users and a robust built-in dashboard for Administrators to manage inventory and sales.
-
 ## 🚀 Live Demo
 
 🔗 [Ekart](https://ekart-frontend-seven.vercel.app/)
+
+# 🛒 Ekart: Premium E-Commerce Experience
+
+Ekart is a fully modern, responsive full-stack e-commerce web application designed with a premium dark-themed architecture, Ekart provides an incredibly smooth shopping experience for users and a robust built-in dashboard for Administrators to manage inventory and sales.
 
 ## ✨ Key Features
 - **Modern UI/UX**: Premium styling utilizing deep contrast, glowing accents, and frosted glass components.
