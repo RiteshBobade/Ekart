@@ -4,6 +4,10 @@ Ekart is a fully modern, responsive full-stack e-commerce web application featur
 
 Designed with a premium dark-themed architecture, Ekart provides an incredibly smooth shopping experience for users and a robust built-in dashboard for Administrators to manage inventory and sales.
 
+## 🚀 Live Demo
+
+🔗 [score-tracker](https://ekart-frontend-seven.vercel.app/)
+
 ## ✨ Key Features
 - **Modern UI/UX**: Premium styling utilizing deep contrast, glowing accents, and frosted glass components.
 - **Dynamic Animations**: Fluid page transitions and micro-interactions on hovers, scrolls, and clicks using Framer Motion.
