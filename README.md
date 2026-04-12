@@ -6,7 +6,7 @@ Designed with a premium dark-themed architecture, Ekart provides an incredibly s
 
 ## 🚀 Live Demo
 
-🔗 [score-tracker](https://ekart-frontend-seven.vercel.app/)
+🔗 [Ekart](https://ekart-frontend-seven.vercel.app/)
 
 ## ✨ Key Features
 - **Modern UI/UX**: Premium styling utilizing deep contrast, glowing accents, and frosted glass components.
