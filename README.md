@@ -1,8 +1,6 @@
 # 🛒 Ekart: Premium E-Commerce Experience
 
-Ekart is a fully modern, responsive full-stack e-commerce web application featuring a highly polished **glassmorphism** design aesthetic and beautiful micro-interactions powered by `framer-motion`.
-
-Designed with a premium dark-themed architecture, Ekart provides an incredibly smooth shopping experience for users and a robust built-in dashboard for Administrators to manage inventory and sales.
+Ekart is a fully modern, responsive full-stack e-commerce web application designed with a premium dark-themed architecture, Ekart provides an incredibly smooth shopping experience for users and a robust built-in dashboard for Administrators to manage inventory and sales.
 
 ## 🚀 Live Demo
 
